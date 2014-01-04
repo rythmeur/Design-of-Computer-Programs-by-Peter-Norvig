@@ -17,7 +17,7 @@ def zebra_puzzle():
                 for (red, green, ivory, yellow, blue) in c(orderings)
                 if imright(green, ivory)
                 for (Englishman, Spaniard, Ukranian, Japanese, Norwegian) in c(orderings)
-                if Englishman is red
+                if Englishman == red
                 if Norwegian is first
                 if nextto(Norwegian, blue)
                 for (coffee, tea, milk, oj, WATER) in c(orderings)
@@ -25,7 +25,7 @@ def zebra_puzzle():
                 if Ukranian is tea
                 if milk is middle
                 for (OldGold, Kools, Chesterfields, LuckyStrike, Parliaments) in c(orderings)
-                if Kools is yellow
+                if Kools == yellow
                 if LuckyStrike is oj
                 if Japanese is Parliaments
                 for (dog, snails, fox, horse, ZEBRA) in c(orderings)
@@ -46,3 +46,5 @@ def instrument_fn(fn, *args):
     result = fn(*args)
     print('%s got %s with %5d iters over %7d items'%(
         fn.__name__, result, c.starts, c.items))
+
+print instrument_fn( zebra_puzzle)
