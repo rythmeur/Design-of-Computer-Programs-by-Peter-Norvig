@@ -76,34 +76,39 @@
 #
 # print timedcalls (100, zebra_puzzle)
 
-
-# User Instructions
 #
-# Define a function, all_ints(), that generates the
-# integers in the order 0, +1, -1, +2, -2, ...
+# # User Instructions
+# #
+# # Define a function, all_ints(), that generates the
+# # integers in the order 0, +1, -1, +2, -2, ...
+#
+# def ints(start, end = None):
+#     i = start
+#     while i <= end or end is None:
+#         yield i
+#         i = i + 1
+#
+# def all_ints():
+#     "Generate integers in the order 0, +1, -1, +2, -2, +3, -3, ..."
+#     # Your code here.
+#     j = ints(0)
+#
+#     while True:
+#         return (b * z
+#             for b in j
+#             for z in [1, -1]
+#             if (b*z != 0 or z == -1))
+#     # #another solution
+#     # yield 0
+#     # for i in ints(1):
+#     #     yield +i
+#     #     yield -i
+#
+# v = all_ints()
+# for zz in range (10):
+#     print next(v)
+import re
+formula = 'ODD + ODD == EVEN'
+print "".join(set("".join(re.findall("[A-Z]+",formula))))
 
-def ints(start, end = None):
-    i = start
-    while i <= end or end is None:
-        yield i
-        i = i + 1
-
-def all_ints():
-    "Generate integers in the order 0, +1, -1, +2, -2, +3, -3, ..."
-    # Your code here.
-    j = ints(0)
-
-    while True:
-        return (b * z
-            for b in j
-            for z in [1, -1]
-            if (b*z != 0 or z == -1))
-    # #another solution
-    # yield 0
-    # for i in ints(1):
-    #     yield +i
-    #     yield -i
-
-v = all_ints()
-for zz in range (10):
-    print next(v)
+#>>> python -m cProfile zebra.py # показывает, на что тратится время

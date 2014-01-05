@@ -1,3 +1,4 @@
+# # This Python file uses the following encoding: utf-8
 from __future__ import division
 import string, re 
 import itertools
@@ -28,10 +29,12 @@ def faster_solve(formula):
     """Given a formula like 'ODD + ODD == EVEN', fill in digits to solve it.
     Input formula is a string; output is a digit-filled-in string or None.
     This version precompiles the formula; only one eval per formula."""
-    f, letters = compile_formula(formula)
+    f, letters = compile_formula(formula, True)
+    print "f - ", f
     for digits in itertools.permutations((1,2,3,4,5,6,7,8,9,0), len(letters)):
+        print digits
         try:
-            if f(*digits) is True:
+            if f(*digits) is True: #в f содержится вот такая хрень lambda N, E, D, O, V: (1*D+10*D+100*O) + (1*D+10*D+100*O) == (1*N+10*E+100*V+1000*E) - и мы ее вызываем и распаковываем весь набор аргументов напр.(1, 2, 3, 4, 5)
                 table = string.maketrans(letters, ''.join(map(str, digits)))
                 return formula.translate(table)
         except ArithmeticError:
@@ -43,10 +46,11 @@ def compile_formula(formula, verbose=False):
     (lambda Y, M, E, U, O): (U+10*O+100*Y) == (E+10*M)**2), 'YMEUO' """
     letters = ''.join(set(re.findall('[A-Z]', formula)))
     parms = ', '.join(letters)
-    tokens = map(compile_word, re.split('([A-Z]+)', formula))
+    tokens = map(compile_word, re.split('([A-Z]+)', formula)) #разбивает строку по наборам загл. букв YOU ME, но их сохраняет и возвращает вместе с тем, что между ними
     body = ''.join(tokens)
+    #f - просто строка, которая каждый раз описывает новую функцию
     f = 'lambda %s: %s' % (parms, body)
-    if verbose: print f
+    if verbose: print f, eval(f) # eval(f) - здесь уже интересно. эта штука выполняет содержимое строки, а т.к. в строке - сделать лямбду , то возвращается объект - лямбда функция с конкретными параметрами под данную формулу
     return eval(f), letters
 
 def compile_word(word):
@@ -60,20 +64,21 @@ def compile_word(word):
     else:
         return word
 
-examples = """TWO + TWO == FOUR
-A**2 + B**2 == C**2
-A**2 + BE**2 == BY**2
-X / X == X
-A**N + B**N == C**N and N > 1
-ATOM**0.5 == A + TO + M
-GLITTERS is not GOLD
-ONE < TWO and FOUR < FIVE
-ONE < TWO < THREE
-RAMN == R**3 + RM**3 == N**3 + RX**3
-sum(range(AA)) == BB
-sum(range(POP)) == BOBO
-ODD + ODD == EVEN
-PLUTO not in set([PLANETS])""".splitlines()
+# examples = """TWO + TWO == FOUR
+# A**2 + B**2 == C**2
+# A**2 + BE**2 == BY**2
+# X / X == X
+# A**N + B**N == C**N and N > 1
+# ATOM**0.5 == A + TO + M
+# GLITTERS is not GOLD
+# ONE < TWO and FOUR < FIVE
+# ONE < TWO < THREE
+# RAMN == R**3 + RM**3 == N**3 + RX**3
+# sum(range(AA)) == BB
+# sum(range(POP)) == BOBO
+# ODD + ODD == EVEN
+# PLUTO not in set([PLANETS])""".splitlines()
+examples = """ODD + ODD == EVEN""".splitlines()
 
 def test():
     t0 = time.clock()
