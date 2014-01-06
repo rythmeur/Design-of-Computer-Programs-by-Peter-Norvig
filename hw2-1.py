@@ -1,4 +1,5 @@
 __author__ = 'rythmeur'
+# # This Python file uses the following encoding: utf-8
 # --------------
 # User Instructions
 #
@@ -20,13 +21,22 @@ def compile_formula(formula, verbose=False):
     # modify the code in this function.
 
     letters = ''.join(set(re.findall('[A-Z]', formula)))
+
+    #find all first letter (they must not be = 0
+    first_letters = ', '.join(set (re.findall(r'\b[A-Z]', formula)) ) # \b - word boundary
+    print "first_letters = ", first_letters
     parms = ', '.join(letters)
     tokens = map(compile_word, re.split('([A-Z]+)', formula))
     body = ''.join(tokens)
+    # body = body + ' and (0 != ( lambda ' + first_letters + ': 1+2) )'
+    body = body + ' and (0 not in [a*a  for a in [' + first_letters + '] ] )' # body =  (1*U+10*O+100*Y) == (1*E+10*M)**2 and (0 not in [a*a  for a in [Y, M] ] )
     print "parms = ", parms, "body = ", body
-    f = 'lambda %s: %s' % (parms, body)
-    if verbose: print f
+
+    f = 'lambda %s:  %s' % (parms,  body)
+    if verbose: print "f = " , f
     return eval(f), letters
+
+
 
 def compile_word(word):
     """Compile a word of uppercase letters as numeric digits.
@@ -45,6 +55,7 @@ def faster_solve(formula):
     This version precompiles the formula; only one eval per formula."""
     f, letters = compile_formula(formula)
     for digits in itertools.permutations((1,2,3,4,5,6,7,8,9,0), len(letters)):
+
         try:
             if f(*digits) is True:
                 table = string.maketrans(letters, ''.join(map(str, digits)))
