@@ -16,6 +16,7 @@
 # Please do not use regular expressions to solve this quiz!
 
 #http://tarokuriyama.com/projects/palindrome2.php
+#http://www.akalin.cx/longest-palindrome-linear-time
 
 def longest_subpalindrome_slice(text):
     "Return (i, j) such that text[i:j] is the longest palindrome in text."
