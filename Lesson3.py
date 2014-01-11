@@ -137,35 +137,110 @@ def matchset(pattern, text):
 # Complete the code for the compiler by completing the constructor
 # for the patterns alt(x, y) and oneof(chars).
 
-def lit(s):         return lambda Ns: set([s]) if len(s) in Ns else null
-def alt(x, y):      return lambda Ns:  x(Ns)| y(Ns)# your code here
-def star(x):        return lambda Ns: opt(plus(x))(Ns)
-def plus(x):        return lambda Ns: genseq(x, star(x), Ns, startx=1) #Tricky
-def oneof(chars):   return lambda Ns: set([ch for ch in chars]) if (sum (Ns)) == len (set([ch for ch in chars]) ) else null # set('theseletters') - without any loop
-def seq(x, y):      return lambda Ns: genseq(x, y, Ns)
-def opt(x):         return alt(epsilon, x)
-dot = oneof('?')    # You could expand the alphabet to more chars.
-epsilon = lit('')   # The pattern that matches the empty string.
+# def lit(s):         return lambda Ns: set([s]) if len(s) in Ns else null
+# def alt(x, y):      return lambda Ns:  x(Ns)| y(Ns)# your code here
+# def star(x):        return lambda Ns: opt(plus(x))(Ns)
+# def plus(x):        return lambda Ns: genseq(x, star(x), Ns, startx=1) #Tricky
+# def oneof(chars):   return lambda Ns: set([ch for ch in chars]) if (sum (Ns)) == len (set([ch for ch in chars]) ) else null # set('theseletters') - without any loop
+# def seq(x, y):      return lambda Ns: genseq(x, y, Ns)
+# def opt(x):         return alt(epsilon, x)
+# dot = oneof('?')    # You could expand the alphabet to more chars.
+# epsilon = lit('')   # The pattern that matches the empty string.
+#
+# null = frozenset([])
+#
+# def test():
+#
+#     f = lit('hello')
+#     assert f(set([1, 2, 3, 4, 5])) == set(['hello'])
+#     assert f(set([1, 2, 3, 4]))    == null
+#
+#     g = alt(lit('hi'), lit('bye'))
+#     assert g(set([1, 2, 3, 4, 5, 6])) == set(['bye', 'hi'])
+#     assert g(set([1, 3, 5])) == set(['bye'])
+#
+#     h = oneof('theseletters')
+#     assert h(set([1, 2, 3])) == set(['t', 'h', 'e', 's', 'l', 'r'])
+#     assert h(set([2, 3, 4])) == null
+#
+#     return 'tests pass'
+#
+#
+# h = oneof('theseletters')
+# print  h(set([1, 2, 3]))
+# print test()
 
-null = frozenset([])
+# # ---------------
+# # User Instructions
+# #
+# # Write a function, n_ary(f), that takes a binary function (a function
+# # that takes 2 inputs) as input and returns an n_ary function.
+#
+# def n_ary(f):
+#     """Given binary function f(x, y), return an n_ary function such
+#     that f(x, y, z) = f(x, f(y,z)), etc. Also allow f(x) = x."""
+#     def n_ary_f(x, *args):
+#         # your code here
+#         new_args =(x,) + (args)
+#         length = len(new_args)
+#         result = x
+#
+#         if length >2:
+#             result = f(new_args[length-2], new_args[length-1])
+#             for i in range (length-3,-1,-1):
+#                 result = f(new_args[i], result)
+#
+#         return result
+#     return n_ary_f
+#
+# def f(x,q):
+#     return x*q
+# print n_ary(f)(3,4,5,6,7,8)
+# print n_ary(f)(5)
 
-def test():
+# ---------------
+# User Instructions
+#
+# Modify the function, trace, so that when it is used
+# as a decorator it gives a trace as shown in the previous
+# video. You can test your function by applying the decorator
+# to the provided fibonnaci function.
+#
+# Note: Running this in the browser's IDE will not display
+# the indentations.
 
-    f = lit('hello')
-    assert f(set([1, 2, 3, 4, 5])) == set(['hello'])
-    assert f(set([1, 2, 3, 4]))    == null
-
-    g = alt(lit('hi'), lit('bye'))
-    assert g(set([1, 2, 3, 4, 5, 6])) == set(['bye', 'hi'])
-    assert g(set([1, 3, 5])) == set(['bye'])
-
-    h = oneof('theseletters')
-    assert h(set([1, 2, 3])) == set(['t', 'h', 'e', 's', 'l', 'r'])
-    assert h(set([2, 3, 4])) == null
-
-    return 'tests pass'
+from functools import update_wrapper
 
 
-h = oneof('theseletters')
-print  h(set([1, 2, 3]))
-print test()
+def decorator(d):
+    "Make function d a decorator: d wraps a function fn."
+    def _d(fn):
+        return update_wrapper(d(fn), fn)
+    update_wrapper(_d, d)
+    return _d
+
+@decorator
+def trace(f):
+    indent = '   '
+    def _f(*args):
+        signature = '%s(%s)' % (f.__name__, ', '.join(map(repr, args)))
+        print '%s--> %s' % (trace.level*indent, signature)
+        trace.level += 1
+        try:
+            result = f(*args)# your code here
+            print '%s<-- %s == %s' % ((trace.level-1)*indent,
+                                      signature, result)
+        finally:
+            trace.level -=1 # your code here
+        return result# your code here
+    trace.level = 0
+    return _f
+
+@trace
+def fib(n):
+    if n == 0 or n == 1:
+        return 1
+    else:
+        return fib(n-1) + fib(n-2)
+
+fib(6) #running this in the browser's IDE  will not display the indentations!
