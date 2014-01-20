@@ -43,6 +43,10 @@ def grammar(description, whitespace=r'\s*'):
     print "G", G
     return G
 
+def split(text, sep = None, maxsplit = -1):
+    "Like str.split applied to text, but strips whitespace from each piece."
+    return [t.strip() for t in text.strip().split(sep, maxsplit) if t]
+
 def decorator(d):
     "Make function d a decorator: d wraps a function fn."
     def _d(fn):
@@ -93,7 +97,7 @@ def parse(start_symbol, text, grammar):
             print "atom in grammar in parse_atom = ", atom
             for alternative in grammar[atom]:
                 tree, rem = parse_sequence(alternative, text)
-                if rem is not None: print  ("if rem is not None: print  ([atom]+tree, rem)", [atom]+tree, rem)
+                # if rem is not None: print  ("if rem is not None: print  ([atom]+tree, rem)", [atom]+tree, rem)
                 if rem is not None: return [atom]+tree, rem
             return Fail
         else:  # Terminal: match characters against start of text
@@ -105,13 +109,16 @@ def parse(start_symbol, text, grammar):
 
 Fail = (None, None)
 
-JSON = grammar("""value => object | array | string | number
+
+JSON = grammar("""
+value => object | array | string | number
 object => { members }
 array => [ elements ]
 elements => elements , elements | value
 string => ".*"
 number => int | float
-int => \d+""", whitespace='\s*')
+int => \d+
+""", whitespace='\s*')
 #
 # Exp => Term [+-] Exp | Term
 # Term => Factor [*/] Term | Factor
@@ -121,7 +128,9 @@ int => \d+""", whitespace='\s*')
 # Var => [a-zA-Z_]\w*
 # Num => [-+]?[0-9]+([.][0-9]*)?
 def json_parse(text):
-    return parse('value', text, JSON)
+    z=parse('value', text, JSON)
+    print "parse('value', text, JSON) = ", z
+    return z
 
 def test():
     # assert json_parse('["testing", 1, 2, 3]') == (
@@ -132,7 +141,8 @@ def test():
     #                    ['int', '3']]]]]]], ']']], '')
 
     assert json_parse('123') == (
-                       ['value', ['number', ['int', '123']]])
+                       ['value', ['number', ['int', '123']]], '')
+
 
     # assert json_parse('-123.456e+789') == (
     #                    ['value', ['number', ['int', '-123'], ['frac', '.456'], ['exp', 'e+789']]], '')
