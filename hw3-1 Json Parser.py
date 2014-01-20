@@ -40,6 +40,7 @@ def grammar(description, whitespace=r'\s*'):
         lhs, rhs = split(line, ' => ', 1)
         alternatives = split(rhs, ' | ')
         G[lhs] = tuple(map(split, alternatives))
+    print "G", G
     return G
 
 def decorator(d):
@@ -79,7 +80,9 @@ def parse(start_symbol, text, grammar):
     def parse_sequence(sequence, text):
         result = []
         for atom in sequence:
+            print atom, "atom in sequence"
             tree, text = parse_atom(atom, text)
+            print "tree, text in parse_sequence", tree, text
             if text is None: return Fail
             result.append(tree)
         return result, text
@@ -87,8 +90,10 @@ def parse(start_symbol, text, grammar):
     @memo
     def parse_atom(atom, text):
         if atom in grammar:  # Non-Terminal: tuple of alternatives
+            print "atom in grammar in parse_atom = ", atom
             for alternative in grammar[atom]:
                 tree, rem = parse_sequence(alternative, text)
+                if rem is not None: print  ("if rem is not None: print  ([atom]+tree, rem)", [atom]+tree, rem)
                 if rem is not None: return [atom]+tree, rem
             return Fail
         else:  # Terminal: match characters against start of text
