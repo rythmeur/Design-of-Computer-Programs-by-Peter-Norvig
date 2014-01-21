@@ -44,8 +44,12 @@ def grammar(description, whitespace=r'\s*'):
     return G
 
 def split(text, sep = None, maxsplit = -1):
+
     "Like str.split applied to text, but strips whitespace from each piece."
-    return [t.strip() for t in text.strip().split(sep, maxsplit) if t]
+    bb = [t.strip() for t in text.strip().split(sep, maxsplit) if t]
+    # print text, " - text before split"
+    # print bb, " - text after split"
+    return bb
 
 def decorator(d):
     "Make function d a decorator: d wraps a function fn."
@@ -101,6 +105,7 @@ def parse(start_symbol, text, grammar):
                 if rem is not None: return [atom]+tree, rem
             return Fail
         else:  # Terminal: match characters against start of text
+            print "else - tokenizer atom, text = ", atom, text
             m = re.match(tokenizer % atom, text)
             return Fail if (not m) else (m.group(1), text[m.end():])
 
@@ -110,15 +115,16 @@ def parse(start_symbol, text, grammar):
 Fail = (None, None)
 
 
-JSON = grammar("""
-value => object | array | string | number
-object => { members }
-array => [ elements ]
-elements => elements , elements | value
+JSON = grammar("""value => object | array | string | number
+object => [{] members [}]
+members  =>  pair  [,] members | pair
+pair  =>   string [:] value
+array => [[] elements []]
+elements =>   value [,] elements | value
 string => ".*"
 number => int | float
-int => \d+
-""", whitespace='\s*')
+int => \d+""", whitespace='\s*')
+
 #
 # Exp => Term [+-] Exp | Term
 # Term => Factor [*/] Term | Factor
@@ -139,20 +145,41 @@ def test():
     #                    ['int', '1']]], ',', ['elements', ['value', ['number',
     #                    ['int', '2']]], ',', ['elements', ['value', ['number',
     #                    ['int', '3']]]]]]], ']']], '')
-
-    assert json_parse('123') == (
-                       ['value', ['number', ['int', '123']]], '')
+    #
+    # assert json_parse('123') == (
+    #                    ['value', ['number', ['int', '123']]], '')
+    #
+    assert json_parse('"test"') == (
+                       ['value', ['string', '"test"']], '')
+    assert json_parse('"te st"') == (
+                       ['value', ['string', '"te st"']], '')
+    assert json_parse('"te":"st"') == (
+                       ['value', ['string', '"te":"st"']], '')
+    #
+    # assert json_parse('["test"]') == (
+    #                    ['value', ['array', '[', ['elements', ['value',
+    #                    ['string', '"test"']]], ']']], '')
 
 
     # assert json_parse('-123.456e+789') == (
     #                    ['value', ['number', ['int', '-123'], ['frac', '.456'], ['exp', 'e+789']]], '')
     #
-    # assert json_parse('{"age": 21, "state":"CO","occupation":"rides the rodeo"}') == (
+    # assert json_parse('{"age": 21, "state":"CO", "occupation":"ride stherodeo"}') == (
     #                   ['value', ['object', '{', ['members', ['pair', ['string', '"age"'],
     #                    ':', ['value', ['number', ['int', '21']]]], ',', ['members',
     #                   ['pair', ['string', '"state"'], ':', ['value', ['string', '"CO"']]],
     #                   ',', ['members', ['pair', ['string', '"occupation"'], ':',
-    #                   ['value', ['string', '"rides the rodeo"']]]]]], '}']], '')
+    #                   ['value', ['string', '"ride stherodeo"']]]]]], '}']], '')
+
+    # assert json_parse('{"age" : 21}') == (
+    #                   ['value', ['object', '{', ['members', ['pair', ['string', '"age"'],
+    #                    ':', ['value', ['number', ['int', '21']]]]], '}']], '')
+    #
+    # assert json_parse('{"age": 21, "state":"CO"}') == (
+    #                   ['value', ['object', '{', ['members', ['pair', ['string', '"age"'],
+    #                    ':', ['value', ['number', ['int', '21']]]], ',', ['members',
+    #                   ['pair', ['string', '"state"'], ':', ['value', ['string', '"CO"']]]]], '}']], '')
+
     return 'tests pass'
 
 print test()
