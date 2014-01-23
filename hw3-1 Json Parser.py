@@ -121,9 +121,11 @@ members  =>  pair  [,] members | pair
 pair  =>   string [:] value
 array => [[] elements []]
 elements =>   value [,] elements | value
-string => ".*"
-number => int | float
-int => \d+""", whitespace='\s*')
+string => ".*?"
+number => int  frac exp | int
+int => [+-]?\d+
+frac => \.\d+
+exp => e\+\d+""", whitespace='\s*')
 
 #
 # Exp => Term [+-] Exp | Term
@@ -139,46 +141,48 @@ def json_parse(text):
     return z
 
 def test():
-    # assert json_parse('["testing", 1, 2, 3]') == (
-    #                    ['value', ['array', '[', ['elements', ['value',
-    #                    ['string', '"testing"']], ',', ['elements', ['value', ['number',
-    #                    ['int', '1']]], ',', ['elements', ['value', ['number',
-    #                    ['int', '2']]], ',', ['elements', ['value', ['number',
-    #                    ['int', '3']]]]]]], ']']], '')
-    #
-    # assert json_parse('123') == (
-    #                    ['value', ['number', ['int', '123']]], '')
-    #
+    assert json_parse('["testing", 1, 2, 3]') == (
+                       ['value', ['array', '[', ['elements', ['value',
+                       ['string', '"testing"']], ',', ['elements', ['value', ['number',
+                       ['int', '1']]], ',', ['elements', ['value', ['number',
+                       ['int', '2']]], ',', ['elements', ['value', ['number',
+                       ['int', '3']]]]]]], ']']], '')
+
+    assert json_parse('123') == (
+                       ['value', ['number', ['int', '123']]], '')
+
     assert json_parse('"test"') == (
                        ['value', ['string', '"test"']], '')
     assert json_parse('"te st"') == (
                        ['value', ['string', '"te st"']], '')
-    assert json_parse('"te":"st"') == (
-                       ['value', ['string', '"te":"st"']], '')
-    #
-    # assert json_parse('["test"]') == (
-    #                    ['value', ['array', '[', ['elements', ['value',
-    #                    ['string', '"test"']]], ']']], '')
+
+    # assert json_parse('"te":"st"') == (
+    #                    ['value', ['string', '"te" : "st"']], '')
 
 
-    # assert json_parse('-123.456e+789') == (
-    #                    ['value', ['number', ['int', '-123'], ['frac', '.456'], ['exp', 'e+789']]], '')
-    #
-    # assert json_parse('{"age": 21, "state":"CO", "occupation":"ride stherodeo"}') == (
-    #                   ['value', ['object', '{', ['members', ['pair', ['string', '"age"'],
-    #                    ':', ['value', ['number', ['int', '21']]]], ',', ['members',
-    #                   ['pair', ['string', '"state"'], ':', ['value', ['string', '"CO"']]],
-    #                   ',', ['members', ['pair', ['string', '"occupation"'], ':',
-    #                   ['value', ['string', '"ride stherodeo"']]]]]], '}']], '')
+    assert json_parse('["test"]') == (
+                       ['value', ['array', '[', ['elements', ['value',
+                       ['string', '"test"']]], ']']], '')
 
-    # assert json_parse('{"age" : 21}') == (
-    #                   ['value', ['object', '{', ['members', ['pair', ['string', '"age"'],
-    #                    ':', ['value', ['number', ['int', '21']]]]], '}']], '')
+
+    assert json_parse('-123.456e+789') == (
+                       ['value', ['number', ['int', '-123'], ['frac', '.456'], ['exp', 'e+789']]], '')
+
+    assert json_parse('{"age": 21, "state":"CO", "occupation":"ride stherodeo"}') == (
+                      ['value', ['object', '{', ['members', ['pair', ['string', '"age"'],
+                       ':', ['value', ['number', ['int', '21']]]], ',', ['members',
+                      ['pair', ['string', '"state"'], ':', ['value', ['string', '"CO"']]],
+                      ',', ['members', ['pair', ['string', '"occupation"'], ':',
+                      ['value', ['string', '"ride stherodeo"']]]]]], '}']], '')
+
+    assert json_parse('{"age" : 21}') == (
+                      ['value', ['object', '{', ['members', ['pair', ['string', '"age"'],
+                       ':', ['value', ['number', ['int', '21']]]]], '}']], '')
     #
-    # assert json_parse('{"age": 21, "state":"CO"}') == (
-    #                   ['value', ['object', '{', ['members', ['pair', ['string', '"age"'],
-    #                    ':', ['value', ['number', ['int', '21']]]], ',', ['members',
-    #                   ['pair', ['string', '"state"'], ':', ['value', ['string', '"CO"']]]]], '}']], '')
+    assert json_parse('{"age": 21, "state":"CO"}') == (
+                      ['value', ['object', '{', ['members', ['pair', ['string', '"age"'],
+                       ':', ['value', ['number', ['int', '21']]]], ',', ['members',
+                      ['pair', ['string', '"state"'], ':', ['value', ['string', '"CO"']]]]], '}']], '')
 
     return 'tests pass'
 
