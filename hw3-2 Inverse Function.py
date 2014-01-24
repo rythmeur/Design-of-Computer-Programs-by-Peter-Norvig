@@ -40,34 +40,33 @@ def inverse(f, delta = 1/128.):
     non-negatve numbers, return the function x = f_1(y) that is an approximate
     inverse, picking the closest value to the inverse, within delta."""
 
-    # def derivative(f): # Newton's method
-    #     """Computes the numerical derivative of a function."""
-    #     def df(x, h=0.1e-3):
-    #         der = ( f(x+h/2) - f(x-h/2) )/h
-    #         return der if der!=0 else 1
-    #     return df
-    #
-    # def f_1(y):
-    #     x = 0
-    #     while abs(f(x)- y) > delta :
-    #         x = x - (f(x)-y)/derivative(f)(x)
-    #     return x if (f(x)-y < y-f(x-delta)) else x-delta
-    # return f_1
+    def derivative(f): # Newton's method
+        """Computes the numerical derivative of a function."""
+        def df(x, h=0.1e-3):
+            der = ( f(x+h/2) - f(x-h/2) )/h
+            return der if der!=0 else 0.00001
+        return df
 
     def f_1(y):
-        x, x1 = 100, 10
-        x2 = 1000
-        fx1 = f(x1) - y
-        fx2 = f(x2) - y
-        print fx1, fx2
-        while abs(x1-x2) > delta :
-            x=x1 - 1.0* fx1 * (x1-x2) / fx1 - fx2
-            x2=x1
-            x1=x
-            fx1 = f(x1) - y
-            fx2 = f(x2) - y
-            print x,x1,x2
+        x = y/2.0
+        while abs(f(x)- y) > delta :
+            x = x - (f(x)-y)/derivative(f)(x)
         return x if (f(x)-y < y-f(x-delta)) else x-delta
+    return f_1
+
+    # def f_1(y):
+    #     x, x1 = -100, 100
+    #     x2 = 1000
+    #     fx1 = f(x1) - y
+    #     fx2 = f(x2) - y
+    #     while abs(x1-x2) > delta :
+    #         x=x1 - 1.0* fx1 * (x1-x2) / fx1 - fx2
+    #         x2=x1
+    #         x1=x
+    #         fx1 = f(x1) - y
+    #         fx2 = f(x2) - y
+    #         print x,x1,x2
+    #     return x if (f(x)-y < y-f(x-delta)) else x-delta
 
 
     return f_1
@@ -79,5 +78,5 @@ sqrt = slow_inverse(square)
 
 sqrt2 = inverse(square)
 
-print sqrt(612)
-print sqrt2(612)
+print sqrt(1000000000)
+print sqrt2(1000000000)
