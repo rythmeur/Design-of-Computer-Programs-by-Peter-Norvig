@@ -13,7 +13,7 @@ import re
 #     z=text.replace("<","SPLIT_MARGIN<")
 #     splited_text = z.split("SPLIT_MARGIN")
 #     splited_text2 = splited_text[:]
-#     indeces_to_del = []
+#     indices_to_del = []
 #     for i in range(len(splited_text)):
 #         match_i = re.search("(<)(?: *)(.)",splited_text[i])
 #         if match_i:
@@ -25,10 +25,10 @@ import re
 #                     if "/" + match_i[-1] in splited_text[j]:
 #                         closing = True
 #             if not closing:
-#                 indeces_to_del.append(i)
+#                 indices_to_del.append(i)
 #     # print "splited_text", splited_text2
-#     indeces_to_del.reverse()
-#     for i in indeces_to_del:
+#     indices_to_del.reverse()
+#     for i in indices_to_del:
 #         del splited_text2[i]
 #
 #     result = []
@@ -40,8 +40,8 @@ import re
 
 #Peter Norvig answer
 def findtags(text):
-    parms = '(\w+\s*=\s*"[^"]*"\s*)*'
-    tags = '(<\s*\w+\s*' + parms + '\s*/?>)'
+    parms = '(?:\w+\s*=\s*"[^"]*"\s*)*'
+    tags = '(<\s*\w+\s*' + '\s*/?>)'
     return re.findall(tags,text)
 
 
@@ -74,10 +74,16 @@ def test():
     assert findtags(testtext3) == ['<         b           >']
     return 'tests pass'
 
-print test()
-print findtags(testtext1)
-print findtags(testtext2)
-print findtags(testtext3)
+# print test()
+# print findtags(testtext1)
+# print findtags(testtext2)
+# print findtags(testtext3)
+
+testtext4 = """
+<         b           > this <   b    />
+"""
+
+print findtags(testtext4)
 
 # findtags(testtext1)
 # findtags(testtext2)
