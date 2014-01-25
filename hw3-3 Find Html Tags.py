@@ -41,7 +41,7 @@ import re
 #Peter Norvig answer
 def findtags(text):
     parms = '(?:\w+\s*=\s*"[^"]*"\s*)*'
-    tags = '(<\s*\w+\s*' + '\s*/?>)'
+    tags = '(<\s*\w+\s*' + parms + '\s*/?>)'
     return re.findall(tags,text)
 
 
@@ -80,7 +80,7 @@ def test():
 # print findtags(testtext3)
 
 testtext4 = """
-<         b           > this <   b    />
+<         b           > this </b    >
 """
 
 print findtags(testtext4)
