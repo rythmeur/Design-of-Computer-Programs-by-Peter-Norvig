@@ -233,6 +233,7 @@ def csuccessors(state):
 
 
 
+
 def test():
     assert csuccessors((2, 2, 1, 0, 0, 0)) == {(2, 1, 0, 0, 1, 1): 'C->',
                                                (1, 2, 0, 1, 0, 1): 'M->',
