@@ -36,3 +36,8 @@ if match_i:
     print "Nontype"
 # match_i = match_i.groups()
 print match_i
+
+
+a = (1,4,6)
+p = (2,5,8)
+print a <= p

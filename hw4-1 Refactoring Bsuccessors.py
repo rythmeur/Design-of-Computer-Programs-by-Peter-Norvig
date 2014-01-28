@@ -21,18 +21,17 @@ def bsuccessors3(state):
     Action is a tuple (travelers, arrow) where arrow is '->' or '<-'"""
     here, there, light = state
     if not light:
-        print light
         return dict(((here  - frozenset([a, b]),
                       there | frozenset([a, b]),1),
-                     set([a, b, '->']))
+                     (set([a, b]), '->'))
                     for a in here
                     for b in here)
     else:
-        return dict(((here  | frozenset([a, b, 'light']),
-                      there - frozenset([a, b, 'light'])),
-                     (a, b, '<-'))
-                    for a in there if a is not 'light'
-                    for b in there if b is not 'light')
+        return dict(((here  | frozenset([a, b]),
+                      there - frozenset([a, b]),0),
+                     (set([a, b]), '<-'))
+                    for a in there
+                    for b in there)
 
 def bsuccessors2(state):
     """Return a dict of {state:action} pairs.  A state is a (here, there) tuple,
@@ -61,11 +60,11 @@ def test():
             (frozenset([]), frozenset([1, 2]), 1)  :  (set([1, 2]), '->'), 
             (frozenset([2]), frozenset([1]), 1)    :  (set([1]), '->')}
 
-    # assert bsuccessors3((frozenset([2, 4]), frozenset([3, 5]), 1)) == {
-    #         (frozenset([2, 4, 5]), frozenset([3]), 0)   :  (set([5]), '<-'),
-    #         (frozenset([2, 3, 4, 5]), frozenset([]), 0) :  (set([3, 5]), '<-'),
-    #         (frozenset([2, 3, 4]), frozenset([5]), 0)   :  (set([3]), '<-')}
+    assert bsuccessors3((frozenset([2, 4]), frozenset([3, 5]), 1)) == {
+            (frozenset([2, 4, 5]), frozenset([3]), 0)   :  (set([5]), '<-'),
+            (frozenset([2, 3, 4, 5]), frozenset([]), 0) :  (set([3, 5]), '<-'),
+            (frozenset([2, 3, 4]), frozenset([5]), 0)   :  (set([3]), '<-')}
     return 'tests pass'
 
-# print test()
-print  bsuccessors3((frozenset([1]), frozenset([]), 0))
+print test()
+print  bsuccessors3((frozenset([2, 4]), frozenset([3, 5]), 1))
