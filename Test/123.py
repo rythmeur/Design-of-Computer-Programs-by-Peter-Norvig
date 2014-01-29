@@ -47,3 +47,11 @@ print x
 z= tuple(x)
 print z
 
+a={}
+a[1] = 20
+
+a.update({2:15})
+a[2]={3:18}
+a[2].update({4:28})
+a[2]={3:49}
+print a
