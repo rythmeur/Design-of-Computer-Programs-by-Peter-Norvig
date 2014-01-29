@@ -38,26 +38,44 @@ def more_pour_problem(capacities, goal, start=None):
         start = tuple ([0 for i in range (len(capacities))])
 
     result = shortest_path_search(start,successors, is_goal)
-    print result
+    # print result
     return result
 
 
 
-def successors(set_glasses):
+def successors(states):
     """Return a dict of {state:action} pairs describing what can be reached from
     the (x, y) state and how."""
+    set_glasses = list (states)
+    result = {}
     assert set_glasses <= CAPACITIES ## (x, y) is glass levels; X and Y are glass sizes
+    for glass_number in range(len(set_glasses)):
 
+        set_glasses =  list (states)
+        set_glasses[glass_number] = CAPACITIES[glass_number]
+        result[tuple(set_glasses)] = ('fill', glass_number)
 
+        set_glasses =  list (states)
+        set_glasses[glass_number] = 0
+        result[tuple(set_glasses)] = ('empty', glass_number)
 
+        set_glasses =  list (states)
+        # rest_capacities = list (CAPACITIES)
+        # del set_glasses[glass_number]
+        # del rest_capacities[glass_number]
 
-    # return {((0, y+x) if y+x <= Y else (x-(Y-y), y+(Y-y))): 'X->Y',
-    #         ((x+y, 0) if x+y <= X else (x+(X-x), y-(X-x))): 'X<-Y',
-    #         (X, y): 'fill X',
-    #         (x, Y): 'fill Y',
-    #         (0, y): 'empty X',
-    #         (x, 0): 'empty Y'
-    #         }
+        for recipient in range(len(set_glasses)):
+            if glass_number != recipient:
+                if set_glasses[glass_number]+set_glasses[recipient] <= CAPACITIES[recipient]:
+                    set_glasses[glass_number] =0
+                    set_glasses[recipient] = set_glasses[glass_number]+set_glasses[recipient]
+                else:
+                    set_glasses[glass_number] = set_glasses[glass_number] - (CAPACITIES[recipient] - set_glasses[recipient])
+                    set_glasses[recipient] =  set_glasses[recipient] +  (CAPACITIES[recipient] - set_glasses[recipient])
+
+                result[tuple(set_glasses)] = ('pour', glass_number, recipient)
+    return result
+
 
 def is_goal(glasses):
     if GOAL in glasses:
@@ -87,15 +105,15 @@ def shortest_path_search(start, successors, is_goal):
 Fail = []
     
 def test_more_pour():
-    # assert more_pour_problem((1, 2, 4, 8), 4) == [
-    #     (0, 0, 0, 0), ('fill', 2), (0, 0, 4, 0)]
+    assert more_pour_problem((1, 2, 4, 8), 4) == [
+        (0, 0, 0, 0), ('fill', 2), (0, 0, 4, 0)]
     assert more_pour_problem((1, 2, 4, 8), 8, (1, 2, 4, 8) ) == [(1, 2, 4, 8)]
-    # assert more_pour_problem((1, 2, 4), 3) == [
-    #     (0, 0, 0), ('fill', 2), (0, 0, 4), ('pour', 2, 0), (1, 0, 3)]
-    # starbucks = (8, 12, 16, 20, 24)
-    # assert not any(more_pour_problem(starbucks, odd) for odd in (3, 5, 7, 9))
-    # assert all(more_pour_problem((1, 3, 9, 27), n) for n in range(28))
-    # assert more_pour_problem((1, 3, 9, 27), 28) == []
+    assert more_pour_problem((1, 2, 4), 3) == [
+        (0, 0, 0), ('fill', 2), (0, 0, 4), ('pour', 2, 0), (1, 0, 3)]
+    starbucks = (8, 12, 16, 20, 24)
+    assert not any(more_pour_problem(starbucks, odd) for odd in (3, 5, 7, 9))
+    assert all(more_pour_problem((1, 3, 9, 27), n) for n in range(28))
+    assert more_pour_problem((1, 3, 9, 27), 28) == []
     return 'test_more_pour passes'
 
 print test_more_pour()
