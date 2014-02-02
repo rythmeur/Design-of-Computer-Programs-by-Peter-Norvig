@@ -45,10 +45,8 @@ def subway(**lines):
                 scheme[station] = {stations[i_station - 1 ]:line, stations[i_station + 1 ]:line}
             else:
                 scheme[station].update( {stations[i_station - 1 ]:line, stations[i_station + 1 ]:line})
-
-
-
-    print scheme
+    # print scheme
+    return scheme
 
 
 boston = subway(
@@ -60,12 +58,30 @@ boston = subway(
 def ride(here, there, system=boston):
     "Return a path on the subway system from here to there."
     ## your code here
+    def is_goal(path):
+        return there in path
+
+    def successors(station):
+        return system[station]
+
+    path = shortest_path_search(here,  successors, is_goal)
+    return path
 
 def longest_ride(system):
-    """"Return the longest possible 'shortest path' 
+    import itertools
+    from operator import itemgetter, attrgetter
+    """"Return the longest possible 'shortest path'
     ride between any two stops in the system."""
     ## your code here
-
+    station_list = system.keys()
+    comb = itertools.permutations (station_list,2)
+    all_path = []
+    for here, there in comb:
+        # print  here, there,ride(here,there)
+        p= ride(here,there)
+        all_path.append((p,len(p)))
+    result = sorted(all_path, key=itemgetter(1))
+    return (result[-1][0])
 
 def shortest_path_search(start, successors, is_goal):
     """Find the shortest path from start state to a state
@@ -106,13 +122,13 @@ def test_ride():
         'mit', 'red', 'central', 'red', 'harvard', 'red', 'porter', 'red', 'davis', 'red', 'alewife']
     assert (path_states(longest_ride(boston)) == [
         'wonderland', 'revere', 'suffolk', 'airport', 'maverick', 'aquarium', 'state', 'downtown', 'park',
-        'charles', 'mit', 'central', 'harvard', 'porter', 'davis', 'alewife'] or 
+        'charles', 'mit', 'central', 'harvard', 'porter', 'davis', 'alewife'] or
         path_states(longest_ride(boston)) == [
-                'alewife', 'davis', 'porter', 'harvard', 'central', 'mit', 'charles', 
+                'alewife', 'davis', 'porter', 'harvard', 'central', 'mit', 'charles',
                 'park', 'downtown', 'state', 'aquarium', 'maverick', 'airport', 'suffolk', 'revere', 'wonderland'])
     assert len(path_states(longest_ride(boston))) == 16
     return 'test_ride passes'
 
-# print test_ride()
+print test_ride()
 # print ride('mit', 'government')
-print boston
+# print ride('alewife', 'wonderland')

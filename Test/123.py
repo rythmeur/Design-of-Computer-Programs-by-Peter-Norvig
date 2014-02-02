@@ -27,31 +27,44 @@
 # z.reverse()
 # print z
 
-import re
-text = "Though I"
-# text = "<         b           > this <   /b    >, Though I"
-match_i = re.search("(<)(?: *)(.)",text)
-print type(match_i)
-if match_i:
-    print "Nontype"
-# match_i = match_i.groups()
-print match_i
+# import re
+# text = "Though I"
+# # text = "<         b           > this <   /b    >, Though I"
+# match_i = re.search("(<)(?: *)(.)",text)
+# print type(match_i)
+# if match_i:
+#     print "Nontype"
+# # match_i = match_i.groups()
+# print match_i
+#
+#
+# a = (1,4,6)
+# p = (2,5,8)
+# print a <= p
+#
+# x= list((1,2,5,8))
+# print x
+# z= tuple(x)
+# print z
+#
+# a={}
+# a[1] = 20
+#
+# a.update({2:15})
+# a[2]={3:18}
+# a[2].update({4:28})
+# a[2]={3:49}
+# print a
+
+# def my_function():
+#     try:
+#         1 / 0
+#     except ZeroDivisionError:
+#         print "pass"
+#
+# if __name__ == "__main__":
+#     import timeit
+#     setup = "from __main__ import my_function"
+#     print timeit.timeit("my_function()", setup=setup)
 
 
-a = (1,4,6)
-p = (2,5,8)
-print a <= p
-
-x= list((1,2,5,8))
-print x
-z= tuple(x)
-print z
-
-a={}
-a[1] = 20
-
-a.update({2:15})
-a[2]={3:18}
-a[2].update({4:28})
-a[2]={3:49}
-print a
