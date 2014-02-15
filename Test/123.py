@@ -68,3 +68,21 @@
 #     print timeit.timeit("my_function()", setup=setup)
 
 
+
+from itertools import *
+perm = permutations('ABCDFER', 2)
+comb = combinations('ABCD', 3)
+comb_with_repl = combinations_with_replacement('ABC', 2)
+
+print "permutations: ",
+for n,i in enumerate(perm):
+    print i,
+print n+1
+print "combinations: ",
+for n,i in enumerate (comb):
+    print i,
+print n+1
+print "combinations_with_replacement: ",
+for n,i in enumerate(comb_with_repl):
+    print i,
+print n+1
